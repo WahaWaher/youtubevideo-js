@@ -1,9 +1,12 @@
-/* jQuery.youtubeVideo
-Version: 1.0.0
-Year: 2017-2018
-Author: Sergey Kravchenko
-Repo: https://github.com/WahaWaher/youtubevideo-js
-Contacts: wahawaher@gmail.com */
+/**
+ * jQuery.youtubeVideo
+ * Version: 1.0.2
+ * Repo: https://github.com/WahaWaher/youtubevideo-js
+ * Author: Sergey Kravchenko
+ * Contacts: wahawaher@gmail.com
+ * License: MIT
+ */
+
 ;(function($) {
 
 	var methods = {
@@ -30,11 +33,11 @@ Contacts: wahawaher@gmail.com */
 				title: false,
 				description: false,
 
-				beforeInit:       function(sets) {},
-				afterInit:        function(sets) {},
-				beforeLoadIframe: function(sets) {},
-				afterLoadIframe:  function(sets) {},
-				afterLoadCover:  function(sets) {},
+				beforeInit:       function() {},
+				afterInit:        function() {},
+				beforeLoadIframe: function() {},
+				afterLoadIframe:  function() {},
+				afterLoadCover:   function() {},
 
 			}, $.fn.youtubeVideo.defaults);
 
@@ -63,8 +66,8 @@ Contacts: wahawaher@gmail.com */
 
 				// Воспроизведение (событие)
 				// ID для генерации уник.числа (пространство имен, обраб.)
-				sets._btnNameSpaceID = randomInteger(10000000, 99999999);
-				if( sets.playEvent ) $ths.one(sets.playEvent+'.yv-'+sets._btnNameSpaceID, function() {
+				sets._nsid = randInt(10000000, 99999999);
+				if( sets.playEvent ) $ths.one(sets.playEvent+'.yv-'+sets._nsid, function() {
 					methods.play.call($ths);
 				})
 
@@ -340,7 +343,8 @@ Contacts: wahawaher@gmail.com */
 
 			});
 
-			return this;
+			return $(this);
+
 		},
 
 		destroy: function() {
@@ -349,11 +353,11 @@ Contacts: wahawaher@gmail.com */
 			var $ths = $(this), sets = $ths.data('settings');
 
 			if( sets.layout.playEvent )
-				$ths.off( sets.playEvent+'.yv-'+sets._btnNameSpaceID );
+				$ths.off( sets.playEvent+'.yv-'+sets._nsid );
 			sets.layout.wrap.remove();
 			$ths.removeData();
 
-			return this;
+			return $(this);
 
 		},
 
@@ -367,7 +371,7 @@ Contacts: wahawaher@gmail.com */
 				methods.init.call($ths, newOpts);
 			else methods.init.call($ths, oldOpts);
 
-			return this;
+			return $(this);
 
 		},
 
@@ -411,7 +415,7 @@ Contacts: wahawaher@gmail.com */
 				});
 			}
 
-			return this;
+			return $(this);
 
 		},
 
@@ -432,19 +436,20 @@ Contacts: wahawaher@gmail.com */
 	};
 
 	// Генератор случайного числа
-	function randomInteger(min, max) {
+	function randInt(min, max) {
 		var rand = min - 0.5 + Math.random() * (max - min + 1)
 		rand = Math.round(rand);
 		return rand;
 	}
 
-	$.fn.youtubeVideo = function(methodOrOptions) {
-		if ( methods[methodOrOptions] ) {
-			return methods[ methodOrOptions ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		} else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
+	$.fn.youtubeVideo = function(methOrOpts) {
+		if ( methods[methOrOpts] ) {
+			return methods[ methOrOpts ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+		} else if ( typeof methOrOpts === 'object' || ! methOrOpts ) {
 			methods.init.apply( this, arguments );
+			return this;
 		} else {
-			$.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.youtubeVideo' );
+			$.error( 'Method ' +  methOrOpts + ' does not exist on jQuery.youtubeVideo' );
 		}    
 	};
 

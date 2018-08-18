@@ -7,7 +7,16 @@ const gulp = require('gulp'),
 		rename = require("gulp-rename"),
 		del = require('del'),
 		uglify = require("gulp-uglify"),
-		cssnano = require('gulp-cssnano');
+		cssnano = require('gulp-cssnano'),
+		headerComment = require('gulp-header-comment'),
+		headerInfo = `
+	    	jQuery.youtubeVideo
+		   Version: 1.0.2
+		   Repo: https://github.com/WahaWaher/youtubevideo-js
+		   Author: Sergey Kravchenko
+		   Contacts: wahawaher@gmail.com
+		   License: MIT
+	  `;
 
 
 // BrowserSync
@@ -41,17 +50,24 @@ gulp.task('default', ['browser-sync', 'scss'], function() {
 
 gulp.task('build', ['deldist', 'scss'], function() {
 
-	gulp.src(['demo/js/jquery.youtubevideo.js']).pipe(gulp.dest('dist'));
-	gulp.src(['demo/css/jquery.youtubevideo.css']).pipe(gulp.dest('dist'));
+	gulp.src(['demo/js/jquery.youtubevideo.js'])
+		.pipe(headerComment(headerInfo))
+		.pipe(gulp.dest('dist'));
+
+	gulp.src(['demo/css/jquery.youtubevideo.css'])
+		.pipe(headerComment(headerInfo))
+		.pipe(gulp.dest('dist'));
 
 	gulp.src('demo/js/jquery.youtubevideo.js')
 		.pipe(uglify())
 		.pipe(rename({ suffix: '.min' }))
+		.pipe(headerComment(headerInfo))
 		.pipe(gulp.dest('dist'));
 
 	gulp.src('demo/css/jquery.youtubevideo.css')
 		.pipe(cssnano())
 		.pipe(rename({ suffix: '.min' }))
+		.pipe(headerComment(headerInfo))
 		.pipe(gulp.dest('dist'));
 
 	// gulp.src(['demo/folder/**/*']).pipe(gulp.dest('dist/folder'));
