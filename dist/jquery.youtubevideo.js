@@ -1,6 +1,6 @@
 /**
  * jQuery.youtubeVideo
- * Version: 1.1.3
+ * Version: 1.1.4
  * Repo: https://github.com/WahaWaher/youtubevideo-js
  * Author: Sergey Kravchenko
  * Contacts: wahawaher@gmail.com
@@ -450,7 +450,7 @@
 	// Отсеиватель ID Видо из строки (ссылка)
 	function getVideoID(string) {
 		if( string.match(/http/igm) )
-			return string.split('?v=')[1].split('?t=')[0];
+			return string.split('?v=')[1].split('?t=')[0].split('&t=')[0];
 		return string;
 	}
 

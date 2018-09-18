@@ -441,7 +441,7 @@
 	// Отсеиватель ID Видо из строки (ссылка)
 	function getVideoID(string) {
 		if( string.match(/http/igm) )
-			return string.split('?v=')[1].split('?t=')[0];
+			return string.split('?v=')[1].split('?t=')[0].split('&t=')[0];
 		return string;
 	}
 
