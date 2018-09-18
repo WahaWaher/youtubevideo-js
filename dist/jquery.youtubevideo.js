@@ -1,6 +1,6 @@
 /**
  * jQuery.youtubeVideo
- * Version: 1.0.2
+ * Version: 1.1.3
  * Repo: https://github.com/WahaWaher/youtubevideo-js
  * Author: Sergey Kravchenko
  * Contacts: wahawaher@gmail.com
@@ -27,6 +27,7 @@
 				cover: 'mqdefault',
 				parametrs: 'autoplay=1&autohide=1',
 				playEvent: 'click',
+				playMode: 'block',
 				type: 'video',
 				api: '',
 				duration: false,
@@ -57,7 +58,7 @@
 				var sets = $ths.data('settings'),
 					 layout = sets.layout;
 
-				sets._videoID = $ths.attr('data-ytb-video');
+				sets._videoID = getVideoID( $ths.attr('data-ytb-video') );	
 					 
 				// Callback: beforeInit()
 				sets.beforeInit.call($ths, sets);
@@ -67,9 +68,16 @@
 				// Воспроизведение (событие)
 				// ID для генерации уник.числа (пространство имен, обраб.)
 				sets._nsid = randInt(10000000, 99999999);
-				if( sets.playEvent ) $ths.one(sets.playEvent+'.yv-'+sets._nsid, function() {
-					methods.play.call($ths);
-				})
+
+				if( sets.playMode === 'button' )
+					sets.playElement = sets.layout.button;
+					else if( sets.playMode === 'block' ) sets.playElement = $ths;
+					else sets.playElement = sets.playMode;
+
+				if( sets.playEvent )
+					sets.playElement.one(sets.playEvent+'.yv-'+sets._nsid, function() {
+						methods.play.call($ths);
+					})
 
 				// Созд. разметки для блока видео
 				function createFirstMarkup() {
@@ -121,7 +129,7 @@
 					// Обложка (строка, значения по умолчанию)
 					} else if( sets.cover && typeof(sets.cover) == 'string' && sets.cover.indexOf('default') + 1 ) {
 
-						var coverLink = 'https://i.ytimg.com/vi/' + $ths.data('ytb-video') + '/'+ sets.cover +'.jpg';
+						var coverLink = 'https://i.ytimg.com/vi/' + sets._videoID + '/'+ sets.cover +'.jpg';
 
 						coverImg.src = coverLink;
 						coverImg.onload = function() {
@@ -285,7 +293,7 @@
 
 					$('[data-ytb-video]').each(function (key,value) {
 						if( videoIDs.indexOf($(value).attr('data-ytb-video')) == -1 ) {
-							videoIDs += $(value).attr('data-ytb-video') + ',';
+							videoIDs += getVideoID( $(value).attr('data-ytb-video') ) + ',';
 						}
 					});
 
@@ -353,7 +361,7 @@
 			var $ths = $(this), sets = $ths.data('settings');
 
 			if( sets.layout.playEvent )
-				$ths.off( sets.playEvent+'.yv-'+sets._nsid );
+				sets.playElement.off( sets.playEvent+'.yv-'+sets._nsid );
 			sets.layout.wrap.remove();
 			$ths.removeData();
 
@@ -377,7 +385,7 @@
 
 		play: function() {
 			var $ths = $(this), sets = $ths.data('settings'),
-				 layout = sets.layout, videoID = $ths.attr('data-ytb-video');
+				 layout = sets.layout;
 
 			// Callback: beforeLoadIframe()
 			sets.beforeLoadIframe.call($ths, sets);
@@ -385,12 +393,10 @@
 			var src = '';
 
 			if( sets.type == 'video' ) {
-				src = 'https://www.youtube.com/embed/' + $ths.data('ytb-video');
+				src = 'https://www.youtube.com/embed/' + sets._videoID;
 				if( sets.parametrs ) src += '?' + sets.parametrs;
 			} else if( sets.type == 'playlist' ) {
-				src = 'https://www.youtube.com/embed';
-				if( sets.parametrs ) src += '?' + sets.parametrs;
-				src += '?listType=playlist&list=' + $ths.data('ytb-video');
+				src = 'https://www.youtube.com/embed/videoseries?list=' + sets._videoID;
 			}
 
 			layout.iframe.attr({
@@ -440,6 +446,12 @@
 		var rand = min - 0.5 + Math.random() * (max - min + 1)
 		rand = Math.round(rand);
 		return rand;
+	}
+	// Отсеиватель ID Видо из строки (ссылка)
+	function getVideoID(string) {
+		if( string.match(/http/igm) )
+			return string.split('?v=')[1].split('?t=')[0];
+		return string;
 	}
 
 	$.fn.youtubeVideo = function(methOrOpts) {

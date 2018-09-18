@@ -11,7 +11,7 @@ const gulp = require('gulp'),
 		headerComment = require('gulp-header-comment'),
 		headerInfo = `
 	    	jQuery.youtubeVideo
-		   Version: 1.1.2
+		   Version: 1.1.3
 		   Repo: https://github.com/WahaWaher/youtubevideo-js
 		   Author: Sergey Kravchenko
 		   Contacts: wahawaher@gmail.com
